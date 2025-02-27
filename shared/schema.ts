@@ -15,6 +15,7 @@ export const tasks = pgTable("tasks", {
   completed: boolean("completed").notNull().default(false),
   categoryId: serial("category_id").references(() => categories.id),
   dueDate: timestamp("due_date"),
+  priority: text("priority").notNull().default("medium"), // Add priority field
 });
 
 export const tasksRelations = relations(tasks, ({ one }) => ({
@@ -33,11 +34,13 @@ export const insertTaskSchema = createInsertSchema(tasks)
     title: true,
     categoryId: true,
     dueDate: true,
+    priority: true,
   })
   .extend({
     title: z.string().min(1, "Task title is required").max(100, "Task title is too long"),
     categoryId: z.number().optional(),
     dueDate: z.string().optional(), // We'll handle date conversion in the API
+    priority: z.enum(["low", "medium", "high"]).default("medium"),
   });
 
 export const insertCategorySchema = createInsertSchema(categories)

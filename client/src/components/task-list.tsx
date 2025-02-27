@@ -5,10 +5,24 @@ import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Trash2, CalendarIcon } from "lucide-react";
+import { Trash2, CalendarIcon, Flag } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { format, isPast, isToday } from "date-fns";
+
+function PriorityFlag({ priority }: { priority: string }) {
+  const colorMap = {
+    low: "text-slate-400",
+    medium: "text-orange-400",
+    high: "text-red-500",
+  };
+
+  return (
+    <Flag 
+      className={`h-4 w-4 ${colorMap[priority as keyof typeof colorMap]}`} 
+    />
+  );
+}
 
 export default function TaskList() {
   const { toast } = useToast();
@@ -114,17 +128,20 @@ export default function TaskList() {
                 >
                   {task.title}
                 </span>
-                {category && (
-                  <Badge
-                    variant="outline"
-                    style={{
-                      backgroundColor: category.color + "20",
-                      borderColor: category.color,
-                    }}
-                  >
-                    {category.name}
-                  </Badge>
-                )}
+                <div className="flex items-center gap-2">
+                  <PriorityFlag priority={task.priority} />
+                  {category && (
+                    <Badge
+                      variant="outline"
+                      style={{
+                        backgroundColor: category.color + "20",
+                        borderColor: category.color,
+                      }}
+                    >
+                      {category.name}
+                    </Badge>
+                  )}
+                </div>
               </div>
               {dueDate && (
                 <div className={`flex items-center gap-1 text-sm ${dueDateColor}`}>

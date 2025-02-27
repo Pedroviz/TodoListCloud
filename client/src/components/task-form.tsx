@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { PlusCircle, CalendarIcon } from "lucide-react";
+import { PlusCircle, CalendarIcon, Flag } from "lucide-react";
 import { CategorySelect } from "./category-select";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function TaskForm() {
   const { toast } = useToast();
@@ -27,6 +34,7 @@ export default function TaskForm() {
       title: "",
       categoryId: undefined,
       dueDate: undefined,
+      priority: "medium",
     },
   });
 
@@ -90,6 +98,42 @@ export default function TaskForm() {
               )}
             />
           </div>
+          <FormField
+            control={form.control}
+            name="priority"
+            render={({ field }) => (
+              <FormItem>
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger className="w-[130px]">
+                    <SelectValue placeholder="Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">
+                      <div className="flex items-center">
+                        <Flag className="w-4 h-4 mr-2 text-slate-400" />
+                        Low
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="medium">
+                      <div className="flex items-center">
+                        <Flag className="w-4 h-4 mr-2 text-orange-400" />
+                        Medium
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="high">
+                      <div className="flex items-center">
+                        <Flag className="w-4 h-4 mr-2 text-red-500" />
+                        High
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="dueDate"
