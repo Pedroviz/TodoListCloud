@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import TaskForm from "@/components/task-form";
 import TaskList from "@/components/task-list";
+import CategoryManager from "@/components/category-manager";
 
 export default function Home() {
   return (
@@ -15,6 +17,8 @@ export default function Home() {
           <CardContent className="space-y-6">
             <TaskForm />
             <TaskList />
+            <Separator className="my-6" />
+            <CategoryManager />
           </CardContent>
         </Card>
       </div>

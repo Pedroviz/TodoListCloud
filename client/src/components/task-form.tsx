@@ -9,6 +9,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PlusCircle } from "lucide-react";
+import { CategorySelect } from "./category-select";
 
 export default function TaskForm() {
   const { toast } = useToast();
@@ -16,6 +17,7 @@ export default function TaskForm() {
     resolver: zodResolver(insertTaskSchema),
     defaultValues: {
       title: "",
+      categoryId: undefined,
     },
   });
 
@@ -45,13 +47,13 @@ export default function TaskForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((data) => mutation.mutate(data))}
-        className="flex gap-2"
+        className="space-y-4"
       >
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
-            <FormItem className="flex-1">
+            <FormItem>
               <FormControl>
                 <Input
                   placeholder="Add a new task..."
@@ -62,10 +64,28 @@ export default function TaskForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={mutation.isPending}>
-          <PlusCircle className="h-4 w-4 mr-2" />
-          Add
-        </Button>
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <CategorySelect
+                      value={field.value}
+                      onSelect={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button type="submit" disabled={mutation.isPending}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add
+          </Button>
+        </div>
       </form>
     </Form>
   );
