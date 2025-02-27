@@ -9,6 +9,8 @@ import { Trash2, CalendarIcon, Flag } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { format, isPast, isToday } from "date-fns";
+import { useState } from "react";
+import Confetti from "./confetti";
 
 function PriorityFlag({ priority }: { priority: string }) {
   const colorMap = {
@@ -26,6 +28,7 @@ function PriorityFlag({ priority }: { priority: string }) {
 
 export default function TaskList() {
   const { toast } = useToast();
+  const [confetti, setConfetti] = useState<{ x: number; y: number } | null>(null);
 
   const { data: tasks, isLoading: tasksLoading } = useQuery<Task[]>({
     queryKey: ["/api/tasks"],
@@ -72,6 +75,18 @@ export default function TaskList() {
     },
   });
 
+  const handleTaskComplete = (taskId: number, completed: boolean, event: React.MouseEvent<HTMLDivElement>) => {
+    const checkbox = event.currentTarget as HTMLElement;
+    const rect = checkbox.getBoundingClientRect();
+
+    updateMutation.mutate({ id: taskId, completed });
+
+    if (completed) {
+      setConfetti({ x: rect.left, y: rect.top });
+      setTimeout(() => setConfetti(null), 1000);
+    }
+  };
+
   if (tasksLoading) {
     return (
       <div className="space-y-4">
@@ -96,6 +111,7 @@ export default function TaskList() {
 
   return (
     <div className="space-y-4">
+      {confetti && <Confetti x={confetti.x} y={confetti.y} />}
       {tasks.map((task) => {
         const category = categories?.find((c) => c.id === task.categoryId);
         const dueDate = task.dueDate ? new Date(task.dueDate) : null;
@@ -117,7 +133,7 @@ export default function TaskList() {
             <Checkbox
               checked={task.completed}
               onCheckedChange={(checked) =>
-                updateMutation.mutate({ id: task.id, completed: !!checked })
+                handleTaskComplete(task.id, !!checked, event as React.MouseEvent<HTMLDivElement>)
               }
               disabled={updateMutation.isPending}
             />
