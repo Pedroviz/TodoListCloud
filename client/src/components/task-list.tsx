@@ -76,14 +76,17 @@ export default function TaskList() {
   });
 
   const handleTaskComplete = (taskId: number, completed: boolean, event: React.MouseEvent<HTMLDivElement>) => {
-    const checkbox = event.currentTarget as HTMLElement;
-    const rect = checkbox.getBoundingClientRect();
+    const taskItem = event.currentTarget.closest('[data-task-item]') as HTMLElement;
+    const rect = taskItem.getBoundingClientRect();
 
     updateMutation.mutate({ id: taskId, completed });
 
     if (completed) {
-      setConfetti({ x: rect.left, y: rect.top });
-      setTimeout(() => setConfetti(null), 1000);
+      setConfetti({ 
+        x: rect.left + (rect.width / 2), 
+        y: rect.top + (rect.height / 2)  
+      });
+      setTimeout(() => setConfetti(null), 1500); 
     }
   };
 
@@ -128,6 +131,7 @@ export default function TaskList() {
         return (
           <div
             key={task.id}
+            data-task-item
             className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg"
           >
             <Checkbox
