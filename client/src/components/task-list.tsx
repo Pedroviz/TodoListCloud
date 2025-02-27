@@ -134,13 +134,15 @@ export default function TaskList() {
             data-task-item
             className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg"
           >
-            <Checkbox
-              checked={task.completed}
-              onCheckedChange={(checked) =>
-                handleTaskComplete(task.id, !!checked, event as React.MouseEvent<HTMLDivElement>)
-              }
-              disabled={updateMutation.isPending}
-            />
+            <div onClick={(e) => {
+              const newCompleted = !task.completed;
+              handleTaskComplete(task.id, newCompleted, e);
+            }}>
+              <Checkbox
+                checked={task.completed}
+                disabled={updateMutation.isPending}
+              />
+            </div>
             <div className="flex-1 space-y-1">
               <div className="flex items-center gap-2">
                 <span
