@@ -5,9 +5,10 @@ import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, CalendarIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { format, isPast, isToday } from "date-fns";
 
 export default function TaskList() {
   const { toast } = useToast();
@@ -83,6 +84,16 @@ export default function TaskList() {
     <div className="space-y-4">
       {tasks.map((task) => {
         const category = categories?.find((c) => c.id === task.categoryId);
+        const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+
+        let dueDateColor = "text-muted-foreground";
+        if (dueDate) {
+          if (isPast(dueDate) && !isToday(dueDate)) {
+            dueDateColor = "text-destructive";
+          } else if (isToday(dueDate)) {
+            dueDateColor = "text-orange-500";
+          }
+        }
 
         return (
           <div
@@ -97,22 +108,29 @@ export default function TaskList() {
               disabled={updateMutation.isPending}
             />
             <div className="flex-1 space-y-1">
-              <span
-                className={task.completed ? "line-through text-muted-foreground" : ""}
-              >
-                {task.title}
-              </span>
-              {category && (
-                <Badge
-                  variant="outline"
-                  className="ml-2"
-                  style={{
-                    backgroundColor: category.color + "20",
-                    borderColor: category.color,
-                  }}
+              <div className="flex items-center gap-2">
+                <span
+                  className={task.completed ? "line-through text-muted-foreground" : ""}
                 >
-                  {category.name}
-                </Badge>
+                  {task.title}
+                </span>
+                {category && (
+                  <Badge
+                    variant="outline"
+                    style={{
+                      backgroundColor: category.color + "20",
+                      borderColor: category.color,
+                    }}
+                  >
+                    {category.name}
+                  </Badge>
+                )}
+              </div>
+              {dueDate && (
+                <div className={`flex items-center gap-1 text-sm ${dueDateColor}`}>
+                  <CalendarIcon className="h-3 w-3" />
+                  <span>{format(dueDate, "PPP")}</span>
+                </div>
               )}
             </div>
             <Button

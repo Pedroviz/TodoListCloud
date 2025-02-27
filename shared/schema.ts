@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -14,6 +14,7 @@ export const tasks = pgTable("tasks", {
   title: text("title").notNull(),
   completed: boolean("completed").notNull().default(false),
   categoryId: serial("category_id").references(() => categories.id),
+  dueDate: timestamp("due_date"),
 });
 
 export const tasksRelations = relations(tasks, ({ one }) => ({
@@ -31,10 +32,12 @@ export const insertTaskSchema = createInsertSchema(tasks)
   .pick({
     title: true,
     categoryId: true,
+    dueDate: true,
   })
   .extend({
     title: z.string().min(1, "Task title is required").max(100, "Task title is too long"),
     categoryId: z.number().optional(),
+    dueDate: z.string().optional(), // We'll handle date conversion in the API
   });
 
 export const insertCategorySchema = createInsertSchema(categories)
