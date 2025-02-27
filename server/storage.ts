@@ -18,9 +18,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTask(insertTask: InsertTask): Promise<Task> {
+    // Convert ISO string to Date object for the database
+    const taskData = {
+      ...insertTask,
+      dueDate: insertTask.dueDate ? new Date(insertTask.dueDate) : null,
+    };
+
     const [task] = await db
       .insert(tasks)
-      .values(insertTask)
+      .values(taskData)
       .returning();
     return task;
   }
