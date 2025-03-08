@@ -22,11 +22,12 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+// Correção 1 e 2: export e digitação correta
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: true,
+    allowedHosts: ['all'], // Correção 3: Alterando para array de string
   };
 
   const vite = await createViteServer({

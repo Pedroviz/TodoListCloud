@@ -47,9 +47,9 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // importante configurar o vite apenas no desenvolvimento e depois
+// configurar todas as outras rotas para que a rota catch-all
+// não interfira nas outras rotas
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
@@ -62,8 +62,7 @@ app.use((req, res, next) => {
   server.listen({
     port,
     host: "0.0.0.0",
-    reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
   });
-})();
+});
